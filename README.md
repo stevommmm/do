@@ -12,7 +12,7 @@ Think of the script files as dumb if statements.
 | `#`    | Comment |
 | `?`    | A command with a zero exit code |
 | `!`    | A command resuling in a non-zero exit code |
-| `\t`   | A command to execute if the above `?|!` met the critera |
+| `\t`   | A command to execute if the above `?\|!` met the critera |
 
 
 Tiny example usage
