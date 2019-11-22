@@ -7,10 +7,10 @@ BINARY = ok
 
 all: $(BINARY)
 
-%.o: %.c
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BINARY): $(wildcard *.c)
+$(BINARY): $(wildcard src/*.c)
 	$(CC) $(CFLAGS) -o $@ $^
 
 .PHONY: clean
