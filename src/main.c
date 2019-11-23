@@ -6,14 +6,14 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-#include "func_parser.h"
 
+#include "func_parser.h"
+#include "token.h"
 
 #define TOK_EQ '?'
 #define TOK_NE '!'
 #define TOK_COMMENT '#'
 #define TOK_INDENT '\t'
-
 
 int exec_cmd(char *command) {
     pid_t pid;
@@ -46,6 +46,15 @@ void parse_file(const char *filename) {
     size_t len = 0;
     ssize_t nread;
     bool allow_indent = false;
+    Token *token_head, *token_current;
+
+    token_head = malloc(sizeof(Token));
+    token_head->type = BEGINNING;
+    token_head->next = NULL;
+    token_head->prev = NULL;
+
+    // Keep a reference to where we are
+    token_current = token_head;
 
     stream = fopen(filename, "r");
     if (stream == NULL) {
@@ -88,6 +97,7 @@ void parse_file(const char *filename) {
     }
     free(line);
     fclose(stream);
+    l_free(token_head);
 }
 
 
