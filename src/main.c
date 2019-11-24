@@ -40,6 +40,51 @@ int exec_cmd(char *command) {
 }
 
 
+char *gettoken(FILE *stream) {
+    char c;
+    bool in_quotes = false;
+    bool in_dquotes = false;
+
+    int tmpi = 0;
+    char tmpl[1024] = {'\0'};
+
+    char *ret;
+
+    while ((c = getc(stream)) != EOF) {
+        switch (c) {
+            case '\n':
+            case ' ':
+                if (tmpi == 0) {
+                    continue;
+                }
+                if (!in_quotes && !in_dquotes){
+                    tmpl[tmpi++] = '\0';
+                    ret = malloc(tmpi * sizeof(char));
+                    strncpy(ret, tmpl, tmpi);
+                    return ret;
+                } else {
+                    tmpl[tmpi++] = c;
+                }
+                break;
+            case '\'':
+                if (in_dquotes)
+                    break;
+                in_quotes = !in_quotes;
+                break;
+            case '"':
+                if (in_quotes)
+                    break;
+                in_dquotes = !in_dquotes;
+                break;
+            default:
+                tmpl[tmpi++] = c;
+        }
+    }
+
+    return NULL;
+}
+
+
 void parse_file(const char *filename) {
     FILE *stream;
     char *line = NULL;
@@ -50,6 +95,7 @@ void parse_file(const char *filename) {
 
     token_head = malloc(sizeof(Token));
     token_head->type = BEGINNING;
+    token_head->data = NULL;
     token_head->next = NULL;
     token_head->prev = NULL;
 
@@ -61,6 +107,16 @@ void parse_file(const char *filename) {
         perror("fopen");
         exit(EXIT_FAILURE);
     }
+
+    char *tok;
+    while ((tok = gettoken(stream)) != NULL) {
+        printf("'%s'\n", tok);
+    }
+
+    free(line);
+    fclose(stream);
+    l_free(token_head);
+    exit(0);
 
     while ((nread = getline(&line, &len, stream)) != -1) {
         // printf("Retrieved line of length %zu:\n", nread);

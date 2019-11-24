@@ -26,6 +26,7 @@ void l_free(Token *temp) {
         return;
     }
     free(temp->data);
-    l_free(temp->next);
+    if (temp->next != NULL)
+        l_free(temp->next);
     free(temp);
 }
