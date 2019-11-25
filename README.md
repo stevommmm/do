@@ -2,35 +2,45 @@
 
 Experiment in state management without all the *features* of other tools.
 
-Follows an uncomplicated language for checking state and applying actions based on the inital character of the line.
-
 Think of the script files as dumb if statements.
 
 
-| SYMBOL | USAGE   |
+| ARG | USAGE   |
 |--------|---------|
-| `#`    | Comment |
-| `?`    | A command with a zero exit code |
-| `!`    | A command resuling in a non-zero exit code |
-| `\t`   | A command to execute if the above `?\|!` met the critera |
+| `IF`   | A command with a zero exit code |
+| `NIF`  | A command resuling in a non-zero exit code |
+| `\t`   | A command to execute if the above `[N]IF` met the critera |
 
 
 Tiny example usage
 
 ```text
-!pacman -Qi iptables
-	pacman -Sq iptables
+NIF test -f /etc/passwd
+	echo "PANIC!"
 
-!iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-	iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+NIF echo 'this has no "effect" as we have no conditional commands'
 
-!echo 'this has no "effect" as we have no conditional commands'
-?echo "la la la la la la la 'la'"
+IF echo la la la la la
+	echo "yes"
+	echo "echo is always truthy"
+	echo "we can indent so many times!"
+
+NIF echo "	"
+
+IF true
+	echo "as expected /bin/true == 0"
+
+IF false
+	echo "WAT /bin/false == 0? dis solaris?"
+
+NIF false
+	echo "as expected /bin/false == 1"
+
 ```
 
 ```bash
 mkdir -p scripts
-echo '!echo meow' > scripts/test.f
+echo 'IF echo meow' > scripts/test.f
 make
 ./ok
 ```

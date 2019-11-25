@@ -7,7 +7,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "func_parser.h"
 #include "token.h"
 
 #define TOK_EQ '?'
@@ -15,18 +14,15 @@
 #define TOK_COMMENT '#'
 #define TOK_INDENT '\t'
 
-int exec_cmd(char *command) {
+int exec_cmd(char **command) {
     pid_t pid;
     int status;
     int exit_status = 1;
-    func_args *fa;
 
-    fa = cmd_split_line(command);
 
     if ((pid = fork()) == 0) {
-        execvp(fa->data[0], fa->data);
+        execvp(command[0], command);
         perror("fork");
-        free_func_args(fa);
         exit(EXIT_FAILURE);
     }
 
@@ -34,9 +30,31 @@ int exec_cmd(char *command) {
     if (WIFEXITED(status)) {
         exit_status = WEXITSTATUS(status);
     }
-    // printf("Child status: %d\n", exit_status);
-    free_func_args(fa);
+
+    int i = 0;
+    char *d = command[i];
+    printf("\x1b[30m>");
+    while (d != NULL) {
+        printf(" %s", d);
+        d = command[++i];
+    }
+    printf("\t< code:%d\x1b[0m\n", exit_status);
     return exit_status;
+}
+
+int extract_cmd(Token *cond, Token *nl) {
+    // size out the exec array
+    int command_elements = nl->index - cond->index;
+
+    // build out an array of the right size, NEWLINE is the terminating NULL
+    int i;
+    char *command[command_elements];
+
+    for (i = 0; i < command_elements; i++) {
+        cond = cond->next;
+        command[i] = cond->data;
+    }
+    return exec_cmd(command);
 }
 
 
@@ -76,16 +94,39 @@ void parse_file(const char *filename) {
     Token *tmpt;
     while (token_current != NULL) {
         switch (token_current->type) {
+            case IF_EQ:
             case IF_NE:
                 tmpt = token_find_nextof(token_current, NEWLINE);
                 if (tmpt == NULL)
                     break;
-                printf("%d - %d\n", token_current->index, tmpt->index);
+
+                // Save the result on the IF/NIF for trackback from indenting
+                if (token_current->type == IF_EQ) {
+                    token_current->passed = (bool) extract_cmd(token_current, tmpt) == 0;
+                } else {
+                    token_current->passed = (bool) extract_cmd(token_current, tmpt) != 0;
+                }
+                // jump forwards again so we dont process all the STR making up the command
                 token_current = tmpt;
+
                 break;
-            default:
-                token_current = token_current->next;
+            case INDENT:
+                tmpt = token_find_last_conditional(token_current);
+                if (tmpt == NULL)
+                    break;
+
+                // As long as a conditional passed we'll run
+                if (tmpt->passed) {
+                    tmpt = token_find_nextof(token_current, NEWLINE);
+                    if (tmpt == NULL)
+                        break;
+
+                    extract_cmd(token_current, tmpt); // throw away the result, we don't care
+                    token_current = tmpt;
+                }
+                break;
         }
+        token_current = token_current->next;
     }
 
 

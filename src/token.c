@@ -47,10 +47,6 @@ Token *gettoken(FILE *stream, Token *tok) {
 
     while ((c = getc(stream)) != EOF) {
         switch (c) {
-            case '\t':
-                token->type = INDENT;
-                return token;
-                break;
             case '\n':
             case ' ':
                 if (tmpi == 0) {
@@ -79,15 +75,25 @@ Token *gettoken(FILE *stream, Token *tok) {
                 }
                 break;
             case '\'':
-                if (in_dquotes)
+                if (in_dquotes){
+                    tmpl[tmpi++] = c;
                     break;
+                }
                 in_quotes = !in_quotes;
                 break;
             case '"':
-                if (in_quotes)
+                if (in_quotes){
+                    tmpl[tmpi++] = c;
                     break;
+                }
                 in_dquotes = !in_dquotes;
                 break;
+            case '\t':
+                // Only throw out an INDENT if it's got a newline before it
+                if (token->prev->type == NEWLINE) {
+                    token->type = INDENT;
+                    return token;
+                }
             default:
                 tmpl[tmpi++] = c;
         }
@@ -102,6 +108,16 @@ Token *token_find_nextof(Token *head, TokenType type) {
         if (t->type == type)
             return t;
         t = t->next;
+    }
+    return NULL;
+}
+
+Token *token_find_last_conditional(Token *head) {
+    Token *t = head;
+    while (t != NULL) {
+        if (t->type == IF_EQ || t->type == IF_NE)
+            return t;
+        t = t->prev;
     }
     return NULL;
 }
