@@ -5,11 +5,11 @@ Experiment in state management without all the *features* of other tools.
 Think of the script files as dumb if statements.
 
 
-| ARG | USAGE   |
-|--------|---------|
-| `IF`   | A command with a zero exit code |
-| `NIF`  | A command resuling in a non-zero exit code |
-| `\t`   | A command to execute if the above `[N]IF` met the critera |
+| KEYWORD | USAGE   |
+|---------|---------|
+| `IF`    | A command with a zero exit code |
+| `NIF`   | A command resuling in a non-zero exit code |
+| `\t`    | A command to execute if the above `[N]IF` met the critera |
 
 
 Tiny example usage
