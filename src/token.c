@@ -1,11 +1,9 @@
-#include <limits.h>
 #include <sys/user.h>         // MAX_ARG_STRLEN
 #include <linux/binfmts.h>    // MAX_ARG_STRLEN
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "token.h"
 

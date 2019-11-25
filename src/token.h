@@ -1,6 +1,9 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <stdbool.h>
+#include <stdio.h>
+
 typedef enum { BEGINNING, IF_EQ, IF_NE, STR, NEWLINE, INDENT, UNKNOWN } TokenType;
 
 typedef struct Token {
