@@ -9,12 +9,16 @@
 
 #include "token.h"
 
-
+/** fork & wait for executed command character array
+ *
+ *  \param[in]  command  pointer array of strings to exec, requires NULL terminator
+ *
+ *  \return  exit status of child process executing command
+ */
 int exec_cmd(char **command) {
     pid_t pid;
     int status;
     int exit_status = 1;
-
 
     if ((pid = fork()) == 0) {
         execvp(command[0], command);
@@ -38,6 +42,13 @@ int exec_cmd(char **command) {
     return exit_status;
 }
 
+/** Build an array of strings from our linked list to exec
+ *
+ *  \param[in]  cond  pointer conditional Token
+ *  \param[in]  nl    pointer to NEWLINE Token (used as null terminator in exec)
+ *
+ *  \return  exit status of executed command
+ */
 int extract_cmd(Token *cond, Token *nl) {
     // size out the exec array
     int command_elements = nl->index - cond->index;
@@ -53,7 +64,10 @@ int extract_cmd(Token *cond, Token *nl) {
     return exec_cmd(command);
 }
 
-
+/** Process the file given using our dll tokenizer
+ *
+ *  \param[in]  filename  the path/name of our file to execute
+ */
 void parse_file(const char *filename) {
     FILE *stream;
     Token *token_head, *token_current;
@@ -130,7 +144,10 @@ void parse_file(const char *filename) {
     token_follow_free(token_head);
 }
 
-
+/** Glob over the given directory for matching files & process them iteratively
+ *
+ *  \param[in]  script_path  a globbable pattern
+ */
 void iter_scripts(const char *script_path) {
     glob_t results;
     int ret, i;
