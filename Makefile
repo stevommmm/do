@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -Wuninitialized -O1
+CFLAGS = -g -Wall -Wuninitialized -O1 -std=c11
 ifdef SANATIZE_ADDRESS
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer
 endif
