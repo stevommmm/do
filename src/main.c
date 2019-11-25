@@ -9,10 +9,6 @@
 
 #include "token.h"
 
-#define TOK_EQ '?'
-#define TOK_NE '!'
-#define TOK_COMMENT '#'
-#define TOK_INDENT '\t'
 
 int exec_cmd(char **command) {
     pid_t pid;
@@ -78,6 +74,7 @@ void parse_file(const char *filename) {
         exit(EXIT_FAILURE);
     }
 
+    // Build up our dll iteratively - can neaten this up
     while ((token_current = gettoken(stream, token_current)) != NULL);
 
     // debug dump out our list
@@ -96,7 +93,7 @@ void parse_file(const char *filename) {
         switch (token_current->type) {
             case IF_EQ:
             case IF_NE:
-                tmpt = token_find_nextof(token_current, NEWLINE);
+                tmpt = token_find_next_of(token_current, NEWLINE);
                 if (tmpt == NULL)
                     break;
 
@@ -117,7 +114,7 @@ void parse_file(const char *filename) {
 
                 // As long as a conditional passed we'll run
                 if (tmpt->passed) {
-                    tmpt = token_find_nextof(token_current, NEWLINE);
+                    tmpt = token_find_next_of(token_current, NEWLINE);
                     if (tmpt == NULL)
                         break;
 
@@ -128,8 +125,6 @@ void parse_file(const char *filename) {
         }
         token_current = token_current->next;
     }
-
-
 
     fclose(stream);
     token_follow_free(token_head);

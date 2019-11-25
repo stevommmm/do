@@ -58,6 +58,8 @@ Token *gettoken(FILE *stream, Token *tok) {
                     token->data = malloc(tmpi * sizeof(char));
                     strncpy(token->data, tmpl, tmpi);
 
+                    // When we find a newline, dump whatever was in the string
+                    // and create a new token node of NEWLINE type after it
                     if (c == '\n') {
                         Token *t;
                         t = malloc(sizeof(Token));
@@ -102,7 +104,7 @@ Token *gettoken(FILE *stream, Token *tok) {
 }
 
 
-Token *token_find_nextof(Token *head, TokenType type) {
+Token *token_find_next_of(Token *head, TokenType type) {
     Token *t = head;
     while (t != NULL) {
         if (t->type == type)
