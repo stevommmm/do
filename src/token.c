@@ -125,11 +125,13 @@ Token *token_find_last_conditional(Token *head) {
 }
 
 void token_follow_free(Token *temp) {
-    if(temp == NULL)
-        return;
-    if (temp->data)
-        free(temp->data);
-    if (temp->next != NULL)
-        token_follow_free(temp->next);
-    free(temp);
+    Token *t;
+
+    while (temp != NULL) {
+        t = temp;
+        temp = temp->next;
+        if (t->data)
+            free(t->data);
+        free(t);
+    }
 }
