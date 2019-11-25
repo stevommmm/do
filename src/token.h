@@ -1,9 +1,10 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-typedef enum { BEGINNING, IF_EQ, IF_NE, COMMAND } TokenType;
+typedef enum { BEGINNING, IF_EQ, IF_NE, STR, NEWLINE, UNKNOWN } TokenType;
 
 typedef struct Token {
+    int index;
     TokenType type;
     char *data;
     struct Token *next;

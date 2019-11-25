@@ -22,10 +22,10 @@ void l_append(Token **head, char *x) {
 }
 
 void l_free(Token *temp) {
-    if(temp == NULL) {
+    if(temp == NULL)
         return;
-    }
-    free(temp->data);
+    if (temp->data)
+        free(temp->data);
     if (temp->next != NULL)
         l_free(temp->next);
     free(temp);

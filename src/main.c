@@ -39,8 +39,24 @@ int exec_cmd(char *command) {
     return exit_status;
 }
 
+bool streq(const char *str1, const char *str2) {
+    if (strlen(str1) != strlen(str2))
+        return false;
+    return (bool) (memcmp(str1, str2, strlen(str1)) == 0);
+}
 
-char *gettoken(FILE *stream) {
+
+TokenType gettokentype(const char *token) {
+    if (streq("IF", token)) {
+        return IF_EQ;
+    } else if (streq("NIF", token)) {
+        return IF_NE;
+    }
+    return STR;
+}
+
+
+Token *gettoken(FILE *stream, Token *tok) {
     char c;
     bool in_quotes = false;
     bool in_dquotes = false;
@@ -48,7 +64,15 @@ char *gettoken(FILE *stream) {
     int tmpi = 0;
     char tmpl[1024] = {'\0'};
 
-    char *ret;
+    Token *token;
+    token = malloc(sizeof(Token));
+    token->index = tok->index + 1;
+    token->type = UNKNOWN;
+    token->data = NULL;
+    token->next = NULL;
+    token->prev = tok;
+
+    tok->next = token;
 
     while ((c = getc(stream)) != EOF) {
         switch (c) {
@@ -59,9 +83,22 @@ char *gettoken(FILE *stream) {
                 }
                 if (!in_quotes && !in_dquotes){
                     tmpl[tmpi++] = '\0';
-                    ret = malloc(tmpi * sizeof(char));
-                    strncpy(ret, tmpl, tmpi);
-                    return ret;
+                    token->type = gettokentype(tmpl);
+                    token->data = malloc(tmpi * sizeof(char));
+                    strncpy(token->data, tmpl, tmpi);
+
+                    if (c == '\n') {
+                        Token *t;
+                        t = malloc(sizeof(Token));
+                        t->index = token->index + 1;
+                        t->type = NEWLINE;
+                        t->data = NULL;
+                        t->next = NULL;
+                        t->prev = token;
+                        token->next = t;
+                        return t;
+                    }
+                    return token;
                 } else {
                     tmpl[tmpi++] = c;
                 }
@@ -80,7 +117,6 @@ char *gettoken(FILE *stream) {
                 tmpl[tmpi++] = c;
         }
     }
-
     return NULL;
 }
 
@@ -94,6 +130,7 @@ void parse_file(const char *filename) {
     Token *token_head, *token_current;
 
     token_head = malloc(sizeof(Token));
+    token_head->index = 0;
     token_head->type = BEGINNING;
     token_head->data = NULL;
     token_head->next = NULL;
@@ -108,9 +145,12 @@ void parse_file(const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    char *tok;
-    while ((tok = gettoken(stream)) != NULL) {
-        printf("'%s'\n", tok);
+    while ((token_current = gettoken(stream, token_current)) != NULL);
+
+    token_current = token_head;
+    while (token_current != NULL) {
+        printf("%d - %d: '%s'\n", token_current->index, token_current->type, token_current->data);
+        token_current = token_current->next;
     }
 
     free(line);
