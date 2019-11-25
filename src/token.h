@@ -12,6 +12,7 @@ typedef struct Token {
 } Token;
 
 Token *gettoken(FILE *stream, Token *tok);
-void l_free(Token *head);
+Token *token_find_nextof(Token *head, TokenType type);
+void token_follow_free(Token *head);
 
 #endif /* TOKEN_H */

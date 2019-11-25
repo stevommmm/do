@@ -95,12 +95,23 @@ Token *gettoken(FILE *stream, Token *tok) {
     return NULL;
 }
 
-void l_free(Token *temp) {
+
+Token *token_find_nextof(Token *head, TokenType type) {
+    Token *t = head;
+    while (t != NULL) {
+        if (t->type == type)
+            return t;
+        t = t->next;
+    }
+    return NULL;
+}
+
+void token_follow_free(Token *temp) {
     if(temp == NULL)
         return;
     if (temp->data)
         free(temp->data);
     if (temp->next != NULL)
-        l_free(temp->next);
+        token_follow_free(temp->next);
     free(temp);
 }

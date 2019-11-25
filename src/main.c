@@ -69,16 +69,29 @@ void parse_file(const char *filename) {
         token_current = token_current->next;
     }
 
+    printf("-------------------\n");
+
     // run through structure
     token_current = token_head;
+    Token *tmpt;
     while (token_current != NULL) {
-        //
+        switch (token_current->type) {
+            case IF_NE:
+                tmpt = token_find_nextof(token_current, NEWLINE);
+                if (tmpt == NULL)
+                    break;
+                printf("%d - %d\n", token_current->index, tmpt->index);
+                token_current = tmpt;
+                break;
+            default:
+                token_current = token_current->next;
+        }
     }
 
 
 
     fclose(stream);
-    l_free(token_head);
+    token_follow_free(token_head);
 }
 
 
