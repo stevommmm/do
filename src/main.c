@@ -39,94 +39,9 @@ int exec_cmd(char *command) {
     return exit_status;
 }
 
-bool streq(const char *str1, const char *str2) {
-    if (strlen(str1) != strlen(str2))
-        return false;
-    return (bool) (memcmp(str1, str2, strlen(str1)) == 0);
-}
-
-
-TokenType gettokentype(const char *token) {
-    if (streq("IF", token)) {
-        return IF_EQ;
-    } else if (streq("NIF", token)) {
-        return IF_NE;
-    }
-    return STR;
-}
-
-
-Token *gettoken(FILE *stream, Token *tok) {
-    char c;
-    bool in_quotes = false;
-    bool in_dquotes = false;
-
-    int tmpi = 0;
-    char tmpl[1024] = {'\0'};
-
-    Token *token;
-    token = malloc(sizeof(Token));
-    token->index = tok->index + 1;
-    token->type = UNKNOWN;
-    token->data = NULL;
-    token->next = NULL;
-    token->prev = tok;
-
-    tok->next = token;
-
-    while ((c = getc(stream)) != EOF) {
-        switch (c) {
-            case '\n':
-            case ' ':
-                if (tmpi == 0) {
-                    continue;
-                }
-                if (!in_quotes && !in_dquotes){
-                    tmpl[tmpi++] = '\0';
-                    token->type = gettokentype(tmpl);
-                    token->data = malloc(tmpi * sizeof(char));
-                    strncpy(token->data, tmpl, tmpi);
-
-                    if (c == '\n') {
-                        Token *t;
-                        t = malloc(sizeof(Token));
-                        t->index = token->index + 1;
-                        t->type = NEWLINE;
-                        t->data = NULL;
-                        t->next = NULL;
-                        t->prev = token;
-                        token->next = t;
-                        return t;
-                    }
-                    return token;
-                } else {
-                    tmpl[tmpi++] = c;
-                }
-                break;
-            case '\'':
-                if (in_dquotes)
-                    break;
-                in_quotes = !in_quotes;
-                break;
-            case '"':
-                if (in_quotes)
-                    break;
-                in_dquotes = !in_dquotes;
-                break;
-            default:
-                tmpl[tmpi++] = c;
-        }
-    }
-    return NULL;
-}
-
 
 void parse_file(const char *filename) {
     FILE *stream;
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t nread;
-    bool allow_indent = false;
     Token *token_head, *token_current;
 
     token_head = malloc(sizeof(Token));
@@ -147,51 +62,21 @@ void parse_file(const char *filename) {
 
     while ((token_current = gettoken(stream, token_current)) != NULL);
 
+    // debug dump out our list
     token_current = token_head;
     while (token_current != NULL) {
         printf("%d - %d: '%s'\n", token_current->index, token_current->type, token_current->data);
         token_current = token_current->next;
     }
 
-    free(line);
-    fclose(stream);
-    l_free(token_head);
-    exit(0);
-
-    while ((nread = getline(&line, &len, stream)) != -1) {
-        // printf("Retrieved line of length %zu:\n", nread);
-        line[strcspn(line, "\n")] = '\0'; // no newlines here
-
-        switch(line[0]) {
-            case TOK_EQ:
-                allow_indent = false;
-                if (exec_cmd(line + 1) == 0) {
-                    allow_indent = true;
-                }
-                break;
-            case TOK_NE:
-                allow_indent = false;
-                if (exec_cmd(line + 1) != 0) {
-                    allow_indent = true;
-                }
-                break;
-            case TOK_INDENT:
-                if (allow_indent) {
-                    exec_cmd(line + 1);
-                }
-                break;
-            case TOK_COMMENT:
-                break;
-            case '\0':
-                allow_indent = false;
-                // empty lines are fine
-                break;
-            default:
-                printf("Not sure what this is '%s'\n", line);
-                break;
-        }
+    // run through structure
+    token_current = token_head;
+    while (token_current != NULL) {
+        //
     }
-    free(line);
+
+
+
     fclose(stream);
     l_free(token_head);
 }

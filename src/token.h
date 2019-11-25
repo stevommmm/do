@@ -1,7 +1,7 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-typedef enum { BEGINNING, IF_EQ, IF_NE, STR, NEWLINE, UNKNOWN } TokenType;
+typedef enum { BEGINNING, IF_EQ, IF_NE, STR, NEWLINE, INDENT, UNKNOWN } TokenType;
 
 typedef struct Token {
     int index;
@@ -11,6 +11,7 @@ typedef struct Token {
     struct Token *prev;
 } Token;
 
+Token *gettoken(FILE *stream, Token *tok);
 void l_free(Token *head);
 
 #endif /* TOKEN_H */
