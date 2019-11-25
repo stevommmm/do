@@ -1,8 +1,8 @@
 # ok
 
-Experiment in state management without all the *features* of other tools.
+Experiment in programming a programming language without all the *features* of other tools.
 
-Think of the script files as dumb if statements.
+Think of the script files as dumb squential if statements.
 
 
 | KEYWORD | USAGE   |
@@ -11,9 +11,13 @@ Think of the script files as dumb if statements.
 | `NIF`   | A command resuling in a non-zero exit code |
 | `\t`    | A command to execute if the above `[N]IF` met the critera |
 
+## todo
 
-Tiny example usage
+- [ ] handle superfluous indenting characters
+- [ ] parse nested indenting
 
+
+### Example usage:
 ```text
 NIF test -f /etc/passwd
 	echo "PANIC!"
