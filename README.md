@@ -2,16 +2,17 @@
 
 Experiment in programming a programming language without all the *features* of other tools.
 
-Think of the script files as dumb squential if statements.
+Think of the script files as dumb sequential if statements.
 
 
 | KEYWORD | USAGE   |
 |---------|---------|
 | `IF`    | A command with a zero exit code |
-| `NIF`   | A command resuling in a non-zero exit code |
-| `\t`    | A command to execute if the above `[N]IF` met the critera |
+| `NIF`   | A command resulting in a non-zero exit code |
+| `\t`    | A command to execute if the above `[N]IF` met the criteria |
 
-## todo
+
+todo
 
 - [ ] handle superfluous indenting characters
 - [ ] parse nested indenting
