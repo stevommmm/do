@@ -1,4 +1,4 @@
-# vim: set syn=c et ts=4:
+# vim: set syntax=c et ts=4:
 #ifndef TOKEN_H
 #define TOKEN_H
 
