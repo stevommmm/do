@@ -23,23 +23,14 @@ todo
 NIF test -f /etc/passwd
 	echo "PANIC!"
 
-NIF echo 'this has no "effect" as we have no conditional commands'
+NIF rpm -q iptables
+    yum install iptables -y
 
-IF echo la la la la la
-	echo "yes"
-	echo "echo is always truthy"
-	echo "we can indent so many times!"
+NIF iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
-NIF echo "	"
-
-IF true
-	echo "as expected /bin/true == 0"
-
-IF false
-	echo "WAT /bin/false == 0? dis solaris?"
-
-NIF false
-	echo "as expected /bin/false == 1"
+NIF iptables -C INPUT -i lo -j ACCEPT
+    iptables -A INPUT -i lo -j ACCEPT
 
 ```
 
