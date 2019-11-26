@@ -2,11 +2,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>   // pid_t for old posix versions
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/types.h>   // pid_t for old posix versions
 
 #include "token.h"
+
+int DEBUG_LEVEL = 0;
 
 /** fork & wait for executed command character array
  *
@@ -28,6 +31,10 @@ int exec_cmd(char **command) {
     waitpid(pid, &status, 0);
     if (WIFEXITED(status)) {
         exit_status = WEXITSTATUS(status);
+    }
+
+    if (DEBUG_LEVEL == 0) {
+        return exit_status;
     }
 
     int i = 0;
@@ -89,16 +96,10 @@ void parse_file(const char *filename) {
     }
 
     // Build up our dll iteratively - can neaten this up
-    while ((token_current = gettoken(stream, token_current)) != NULL);
-
-    // debug dump out our list
-    token_current = token_head;
-    while (token_current != NULL) {
-        token_print(token_current);
-        token_current = token_current->next;
+    while ((token_current = gettoken(stream, token_current)) != NULL) {
+        if (DEBUG_LEVEL > 1)
+            token_print(token_current);
     }
-
-    printf("-------------------\n");
 
     // run through structure
     token_current = token_head;
@@ -161,7 +162,8 @@ void iter_scripts(const char *script_path) {
         return;
     }
     for (i = 0; i < results.gl_pathc; i++) {
-        printf("> %s\n", results.gl_pathv[i]);
+        if (DEBUG_LEVEL > 0)
+            printf("> %s\n", results.gl_pathv[i]);
         parse_file(results.gl_pathv[i]);
     }
     globfree(&results);
@@ -172,10 +174,14 @@ int main(int argc, char *argv[]) {
     int i;
     if (argc > 1) {
         for (i = 1; i < argc; i++) {
-            parse_file(argv[i]);
+            if (!strcmp(argv[i], "-v")) {
+                DEBUG_LEVEL++;
+            } else {
+                parse_file(argv[i]);
+            }
         }
     } else {
-        fprintf(stderr, "Missing script file\n  usage: %s <script> ...\n\n", argv[0]);
+        fprintf(stderr, "Missing script file\n  usage: %s [-v ...] <script ...>\n\n", argv[0]);
         return EXIT_FAILURE;
     }
 
