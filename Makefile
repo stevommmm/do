@@ -13,7 +13,10 @@ src/%.o: src/%.c
 $(BINARY): $(wildcard src/*.c)
 	$(CC) $(CFLAGS) -o $@ $^
 
-.PHONY: clean
+.PHONY: clean test
+
+test: $(BINARY)
+	@test/run.sh
 
 clean:
 	$(RM) */*.o *.o $(BINARY)
