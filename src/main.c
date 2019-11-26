@@ -169,8 +169,15 @@ void iter_scripts(const char *script_path) {
 
 
 int main(int argc, char *argv[]) {
-
-    iter_scripts("scripts/*.f");
+    int i;
+    if (argc > 1) {
+        for (i = 1; i < argc; i++) {
+            parse_file(argv[i]);
+        }
+    } else {
+        fprintf(stderr, "Missing script file\n  usage: %s <script> ...\n\n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }
