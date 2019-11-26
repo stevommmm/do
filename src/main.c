@@ -39,12 +39,12 @@ int exec_cmd(char **command) {
 
     int i = 0;
     char *d = command[i];
-    printf("\x1b[30m>");
+    printf("\x1b[30m%d:", exit_status);
     while (d != NULL) {
         printf(" %s", d);
         d = command[++i];
     }
-    printf("\t< code:%d\x1b[0m\n", exit_status);
+    printf("\x1b[0m\n");
     return exit_status;
 }
 
