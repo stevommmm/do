@@ -65,7 +65,7 @@ Token *gettoken(FILE *stream, Token *tok) {
         switch (c) {
             case '\n':
             case ' ':
-                if (tmpi == 0) {
+                if (c == ' ' && tmpi == 0) {
                     break;
                 }
                 if (!in_quotes && !in_dquotes){
