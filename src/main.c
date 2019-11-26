@@ -78,6 +78,9 @@ void parse_file(const char *filename) {
     FILE *stream;
     Token *token_head, *token_current;
 
+    if (DEBUG_LEVEL > 1)
+        printf("file: %s\n", filename);
+
     token_head = malloc(sizeof(Token));
     token_head->index = 0;
     token_head->indent = 0;

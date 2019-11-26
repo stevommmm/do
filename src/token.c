@@ -147,8 +147,13 @@ Token *token_find_next_of(Token *head, TokenType type) {
 Token *token_find_last_conditional(Token *head, int indent_level) {
     Token *t = head;
     while (t != NULL) {
-        if ((t->type == IF_EQ || t->type == IF_NE) && t->indent == indent_level)
+        if (t->type == IF_EQ || t->type == IF_NE) {
+            // If we find a conditional at a lower indent level, we've gone too far
+            if (t->indent < indent_level) {
+                return NULL;
+            }
             return t;
+        }
         t = t->prev;
     }
     return NULL;

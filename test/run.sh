@@ -2,7 +2,7 @@
 
 expected=$(grep '@SUCCESS' test/*.f | wc -l)
 
-output=$(./ok test/* 2>/dev/null)
+output=$(./ok test/*.f 2>/dev/null)
 
 
 failed=$(echo "$output" | grep '@FAILURE' | wc -l)
