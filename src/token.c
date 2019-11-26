@@ -57,6 +57,7 @@ Token *gettoken(FILE *stream, Token *tok) {
     token->data = NULL;
     token->next = NULL;
     token->prev = tok;
+    token->indent = tok->indent;
 
     tok->next = token;
 
@@ -65,7 +66,7 @@ Token *gettoken(FILE *stream, Token *tok) {
             case '\n':
             case ' ':
                 if (tmpi == 0) {
-                    continue;
+                    break;
                 }
                 if (!in_quotes && !in_dquotes){
                     tmpl[tmpi++] = '\0';
@@ -84,6 +85,7 @@ Token *gettoken(FILE *stream, Token *tok) {
                         t->next = NULL;
                         t->prev = token;
                         token->next = t;
+                        t->indent = 0;
                         return t;
                     }
                     return token;
@@ -107,8 +109,9 @@ Token *gettoken(FILE *stream, Token *tok) {
                 break;
             case '\t':
                 // Only throw out an INDENT if it's got a newline before it
-                if (token->prev->type == NEWLINE) {
+                if (token->prev->type == NEWLINE || token->prev->type == INDENT) {
                     token->type = INDENT;
+                    token->indent++;
                     return token;
                 }
             default:
@@ -141,10 +144,10 @@ Token *token_find_next_of(Token *head, TokenType type) {
  *
  *  \return  pointer to Token conditional, NULL if not found
  */
-Token *token_find_last_conditional(Token *head) {
+Token *token_find_last_conditional(Token *head, int indent_level) {
     Token *t = head;
     while (t != NULL) {
-        if (t->type == IF_EQ || t->type == IF_NE)
+        if ((t->type == IF_EQ || t->type == IF_NE) && t->indent == indent_level)
             return t;
         t = t->prev;
     }
@@ -164,4 +167,41 @@ void token_follow_free(Token *temp) {
             free(t->data);
         free(t);
     }
+}
+
+
+/** Pretty print the token
+ *
+ *  \param[in] token
+ */
+void token_print(Token *token) {
+    int i;
+    for (i = 0; i <= token->indent; i++)
+        printf(">");
+    printf("%d ", token->index);
+    switch (token->type) {
+        case BEGINNING:
+            printf("BEGINNING");
+            break;
+        case IF_EQ:
+            printf("IF ");
+            break;
+        case IF_NE:
+            printf("NIF ");
+            break;
+        case STR:
+            printf("STR ");
+            printf("%s ", token->data);
+            break;
+        case NEWLINE:
+            printf("NEWLINE ");
+            break;
+        case INDENT:
+            printf("INDENT ");
+            break;
+        case UNKNOWN:
+            printf("UNKNOWN ");
+            break;
+    }
+    printf("\n");
 }

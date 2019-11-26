@@ -73,6 +73,7 @@ void parse_file(const char *filename) {
 
     token_head = malloc(sizeof(Token));
     token_head->index = 0;
+    token_head->indent = 0;
     token_head->type = BEGINNING;
     token_head->data = NULL;
     token_head->next = NULL;
@@ -93,7 +94,7 @@ void parse_file(const char *filename) {
     // debug dump out our list
     token_current = token_head;
     while (token_current != NULL) {
-        printf("%d - %d: '%s'\n", token_current->index, token_current->type, token_current->data);
+        token_print(token_current);
         token_current = token_current->next;
     }
 
@@ -121,7 +122,10 @@ void parse_file(const char *filename) {
 
                 break;
             case INDENT:
-                tmpt = token_find_last_conditional(token_current);
+                if (token_current->next->type == INDENT || token_current->next->type != STR) {
+                    break;
+                }
+                tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
                 if (tmpt == NULL)
                     break;
 

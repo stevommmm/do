@@ -14,8 +14,8 @@ Think of the script files as dumb sequential if statements.
 
 todo
 
-- [ ] handle superfluous indenting characters
-- [ ] parse nested indenting
+- [x] handle superfluous indenting characters
+- [x] parse nested indenting
 
 
 ### Example usage:
