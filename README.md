@@ -35,8 +35,7 @@ NIF iptables -C INPUT -i lo -j ACCEPT
 ```
 
 ```bash
-mkdir -p scripts
-echo 'IF echo meow' > scripts/test.f
+echo -e 'IF true\n\techo it must be so!' > test.f
 make
-./ok
+./ok ./test.f
 ```
