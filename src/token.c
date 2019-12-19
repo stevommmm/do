@@ -22,7 +22,7 @@ bool streq(const char *str1, const char *str2) {
 
 /** Check a string against known keywords
  *
- *  \param[in]  token  string to compare [N]IF
+ *  \param[in]  token  string to compare ([N]IF|SYNC)
  *
  *  \return  type of token found, defaults to STR unless explicit match
  */
@@ -31,6 +31,9 @@ TokenType gettokentype(const char *token) {
         return IF_EQ;
     } else if (streq("NIF", token)) {
         return IF_NE;
+    }
+    else if (streq("SYNC", token)) {
+        return SYNC;
     }
     return STR;
 }
@@ -186,7 +189,7 @@ void token_print(Token *token) {
     printf("%d ", token->index);
     switch (token->type) {
         case BEGINNING:
-            printf("BEGINNING");
+            printf("BEGINNING ");
             break;
         case IF_EQ:
             printf("IF ");
@@ -203,6 +206,9 @@ void token_print(Token *token) {
             break;
         case INDENT:
             printf("INDENT ");
+            break;
+        case SYNC:
+            printf("SYNC ");
             break;
         case UNKNOWN:
             printf("UNKNOWN ");

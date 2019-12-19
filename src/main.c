@@ -70,16 +70,12 @@ int extract_cmd(Token *cond, Token *nl) {
     return exec_cmd(command);
 }
 
-/** Process the file given using our dll tokenizer
+/** Process the given stream
  *
- *  \param[in]  filename  the path/name of our file to execute
+ *  \param[in]  stream  an open file resource
  */
-void parse_file(const char *filename) {
-    FILE *stream;
+void parse_stream(FILE *stream) {
     Token *token_head, *token_current;
-
-    if (DEBUG_LEVEL > 1)
-        printf("file: %s\n", filename);
 
     token_head = malloc(sizeof(Token));
     token_head->index = 0;
@@ -91,12 +87,6 @@ void parse_file(const char *filename) {
 
     // Keep a reference to where we are
     token_current = token_head;
-
-    stream = fopen(filename, "r");
-    if (stream == NULL) {
-        perror("fopen");
-        exit(EXIT_FAILURE);
-    }
 
     // Build up our dll iteratively - can neaten this up
     while ((token_current = gettoken(stream, token_current)) != NULL) {
@@ -125,6 +115,15 @@ void parse_file(const char *filename) {
                 token_current = tmpt;
 
                 break;
+            case SYNC:
+                if (token_current->next->type == STR) {
+                    printf("SYNC %s\n", token_current->next->data);
+                }
+
+                // skip over the parsed args
+                token_current = token_current->next->next;
+
+                break;
             case INDENT:
                 if (token_current->next->type == INDENT || token_current->next->type != STR) {
                     break;
@@ -146,9 +145,26 @@ void parse_file(const char *filename) {
         }
         token_current = token_current->next;
     }
+    token_follow_free(token_head);
+}
+
+/** Process the file given using our dll tokenizer
+ *
+ *  \param[in]  filename  the path/name of our file to execute
+ */
+void parse_file(const char *filename) {
+    FILE *stream = fopen(filename, "r");
+    if (stream == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+
+    if (DEBUG_LEVEL > 1)
+        printf("file: %s\n", filename);
+
+    parse_stream(stream);
 
     fclose(stream);
-    token_follow_free(token_head);
 }
 
 /** Glob over the given directory for matching files & process them iteratively
