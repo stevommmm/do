@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "remote_stream.h"
 #include "token.h"
 
 int DEBUG_LEVEL = 0;
@@ -117,7 +118,12 @@ void parse_stream(FILE *stream) {
                 break;
             case SYNC:
                 if (token_current->next->type == STR) {
-                    printf("SYNC %s\n", token_current->next->data);
+                    ok_stream *rstream;
+                    rstream = remote_stream(token_current->next->data);
+                    if (rstream != NULL) {
+                        parse_stream(rstream->stream);
+                        remote_stream_free(rstream);
+                    }
                 }
 
                 // skip over the parsed args
