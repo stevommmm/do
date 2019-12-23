@@ -148,6 +148,12 @@ void parse_stream(FILE *stream) {
                     token_current = tmpt;
                 }
                 break;
+            // explicitly silence things we dont handle directly
+            case BEGINNING:
+            case STR:
+            case NEWLINE:
+            case UNKNOWN:
+                break;
         }
         token_current = token_current->next;
     }
