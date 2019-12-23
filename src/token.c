@@ -1,4 +1,4 @@
-#include <sys/user.h>         // MAX_ARG_STRLEN
+#include <sys/user.h>         // PAGE_SIZE for MAX_ARG_STRLEN
 #include <linux/binfmts.h>    // MAX_ARG_STRLEN
 #include <stdbool.h>
 #include <stdio.h>
@@ -6,6 +6,10 @@
 #include <string.h>
 
 #include "token.h"
+
+#ifndef PAGE_SIZE
+#define PAGE_SIZE 4096
+#endif
 
 /** Explicit wrapper to memcmp that checks equal length
  *
