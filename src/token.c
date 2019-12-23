@@ -46,7 +46,7 @@ TokenType gettokentype(const char *token) {
  *  \return  pointer to malloc'd Token, NULL we're done parsing
  */
 Token *gettoken(FILE *stream, Token *tok) {
-    char c;
+    int i;
     bool in_quotes = false;
     bool in_dquotes = false;
 
@@ -64,7 +64,8 @@ Token *gettoken(FILE *stream, Token *tok) {
 
     tok->next = token;
 
-    while ((c = getc(stream)) != EOF) {
+    while ((i = getc(stream)) != EOF) {
+        unsigned char c = i;
         switch (c) {
             case '\n':
             case ' ':
@@ -74,7 +75,7 @@ Token *gettoken(FILE *stream, Token *tok) {
                 if (!in_quotes && !in_dquotes){
                     tmpl[tmpi++] = '\0';
                     token->type = gettokentype(tmpl);
-                    token->data = malloc(tmpi * sizeof(char));
+                    token->data = malloc(tmpi * sizeof(unsigned char));
                     strncpy(token->data, tmpl, tmpi);
 
                     // When we find a newline, dump whatever was in the string
