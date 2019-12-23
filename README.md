@@ -43,3 +43,25 @@ echo -e 'IF true\n\techo it must be so!' > test.f
 make
 ./ok ./test.f
 ```
+
+
+# Building
+
+ubuntu: 
+```bash
+apt install -y make gcc libcurl4-openssl-dev --no-install-recommends
+make
+```
+
+centos: 
+```bash
+yum install -y make gcc libcurl-devel
+make
+```
+
+arm (from x86):
+```bash
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+docker run --rm -ti -v $(pwd):/mnt arm64v8/centos /bin/bash
+# follow centos build process
+```
