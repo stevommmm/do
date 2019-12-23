@@ -1,4 +1,3 @@
-#include <glob.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -178,28 +177,6 @@ void parse_file(const char *filename) {
 
     fclose(stream);
 }
-
-/** Glob over the given directory for matching files & process them iteratively
- *
- *  \param[in]  script_path  a globbable pattern
- */
-void iter_scripts(const char *script_path) {
-    glob_t results;
-    int ret, i;
-    ret = glob(script_path, 0, NULL, &results);
-
-    if (ret != 0) {
-        globfree(&results);
-        return;
-    }
-    for (i = 0; i < results.gl_pathc; i++) {
-        if (DEBUG_LEVEL > 0)
-            printf("> %s\n", results.gl_pathv[i]);
-        parse_file(results.gl_pathv[i]);
-    }
-    globfree(&results);
-}
-
 
 int main(int argc, char *argv[]) {
     int i;
