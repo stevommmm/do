@@ -9,4 +9,4 @@ IF /bin/true
 								IF /bin/true
 									IF /bin/true
 										NIF /bin/false
-											echo "@SUCCESS"
+											DO echo "@SUCCESS"

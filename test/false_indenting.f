@@ -1,3 +1,3 @@
 	IF /bin/true
-		echo @FAILURE
+		DO echo @FAILURE
 
