@@ -7,10 +7,10 @@ Think of the script files as dumb sequential if statements.
 
 | KEYWORD      | USAGE   |
 |--------------|---------|
-| `SYNC` <url> | Use libcurl to fetch a remote script & exec |
-| `IF` <cmd>   | A command with a zero exit code |
-| `NIF` <cmd>  | A command resulting in a non-zero exit code |
-| `DO` <cmd>   | A command to execute, optionally if the above `[N]IF` met the criteria |
+| `SYNC` &lt;url&gt; | Use libcurl to fetch a remote script & exec |
+| `IF` &lt;cmd&gt;   | A command with a zero exit code |
+| `NIF` &lt;cmd&gt;  | A command resulting in a non-zero exit code |
+| `DO` &lt;cmd&gt;   | A command to execute, optionally if the above `[N]IF` met the criteria |
 
 
 todo
