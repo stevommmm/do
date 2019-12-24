@@ -35,9 +35,10 @@ TokenType gettokentype(const char *token) {
         return IF_EQ;
     } else if (streq("NIF", token)) {
         return IF_NE;
-    }
-    else if (streq("SYNC", token)) {
+    } else if (streq("SYNC", token)) {
         return SYNC;
+    } else if (streq("DO", token)) {
+        return DO;
     }
     return STR;
 }
@@ -189,9 +190,9 @@ void token_follow_free(Token *temp) {
  */
 void token_print(Token *token) {
     int i;
+    printf("%d", token->index);
     for (i = 0; i <= token->indent; i++)
-        printf(">");
-    printf("%d ", token->index);
+        printf("  ");
     switch (token->type) {
         case BEGINNING:
             printf("BEGINNING ");
@@ -214,6 +215,9 @@ void token_print(Token *token) {
             break;
         case SYNC:
             printf("SYNC ");
+            break;
+        case DO:
+            printf("DO ");
             break;
         case UNKNOWN:
             printf("UNKNOWN ");

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef enum { BEGINNING, IF_EQ, IF_NE, STR, NEWLINE, INDENT, SYNC, UNKNOWN } TokenType;
+typedef enum { BEGINNING, IF_EQ, IF_NE, DO, SYNC, STR, NEWLINE, INDENT, UNKNOWN } TokenType;
 
 typedef struct Token {
     int index;

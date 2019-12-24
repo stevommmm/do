@@ -90,7 +90,7 @@ void parse_stream(FILE *stream) {
 
     // Build up our dll iteratively - can neaten this up
     while ((token_current = gettoken(stream, token_current)) != NULL) {
-        if (DEBUG_LEVEL > 1)
+        if (DEBUG_LEVEL > 2)
             token_print(token_current);
     }
 
@@ -116,10 +116,17 @@ void parse_stream(FILE *stream) {
 
                 break;
             case SYNC:
-                if (token_current->next->type == STR) {
+                tmpt = NULL;
+                if (token_current->indent > 0) {
+                    tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
+                }
+
+                if (token_current->next->type == STR && (token_current->indent == 0 || (tmpt != NULL && tmpt->passed))) {
                     ok_stream *rstream;
                     rstream = remote_stream(token_current->next->data);
                     if (rstream != NULL) {
+                        if (DEBUG_LEVEL > 1)
+                            printf("stream: %s\n", token_current->next->data);
                         parse_stream(rstream->stream);
                         remote_stream_free(rstream);
                     }
@@ -129,16 +136,16 @@ void parse_stream(FILE *stream) {
                 token_current = token_current->next->next;
 
                 break;
-            case INDENT:
-                if (token_current->next->type == INDENT || token_current->next->type != STR) {
+            case DO:
+                if (token_current->next->type != STR) {
                     break;
                 }
                 tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
-                if (tmpt == NULL)
+                if (token_current->indent > 0 && tmpt == NULL)
                     break;
 
                 // As long as a conditional passed we'll run
-                if (tmpt->passed) {
+                if (token_current->indent == 0 || tmpt->passed) {
                     tmpt = token_find_next_of(token_current, NEWLINE);
                     if (tmpt == NULL)
                         break;
@@ -150,6 +157,7 @@ void parse_stream(FILE *stream) {
             // explicitly silence things we dont handle directly
             case BEGINNING:
             case STR:
+            case INDENT:
             case NEWLINE:
             case UNKNOWN:
                 break;
