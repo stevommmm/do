@@ -38,7 +38,7 @@ SYNC http://localhost/test.f
 ```
 
 ```bash
-echo -e 'IF true\n\techo it must be so!' > test.f
+echo -e 'IF true\n\tDO echo it must be so!' > test.f
 make
 ./ok ./test.f
 ```

@@ -140,9 +140,12 @@ void parse_stream(FILE *stream) {
                 if (token_current->next->type != STR) {
                     break;
                 }
-                tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
-                if (token_current->indent > 0 && tmpt == NULL)
-                    break;
+                tmpt = NULL;
+                if (token_current->indent > 0) {
+                    tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
+                    if (tmpt == NULL)
+                        break;
+                }
 
                 // As long as a conditional passed we'll run
                 if (token_current->indent == 0 || tmpt->passed) {
