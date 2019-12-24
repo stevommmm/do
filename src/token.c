@@ -26,15 +26,15 @@ bool streq(const char *str1, const char *str2) {
 
 /** Check a string against known keywords
  *
- *  \param[in]  token  string to compare ([N]IF|SYNC)
+ *  \param[in]  token  string to compare (IF|NOT|SYNC|DO)
  *
  *  \return  type of token found, defaults to STR unless explicit match
  */
 TokenType gettokentype(const char *token) {
     if (streq("IF", token)) {
-        return IF_EQ;
-    } else if (streq("NIF", token)) {
-        return IF_NE;
+        return IF;
+    } else if (streq("NOT", token)) {
+        return NOT;
     } else if (streq("SYNC", token)) {
         return SYNC;
     } else if (streq("DO", token)) {
@@ -147,7 +147,7 @@ Token *token_find_next_of(Token *head, TokenType type) {
     return NULL;
 }
 
-/** Follow the list backwards until we hit an [N]IF token type
+/** Follow the list backwards until we hit an IF token type
  *
  *  \param[in]  head  pointer to starting location in the list
  *
@@ -156,7 +156,7 @@ Token *token_find_next_of(Token *head, TokenType type) {
 Token *token_find_last_conditional(Token *head, int indent_level) {
     Token *t = head;
     while (t != NULL) {
-        if (t->type == IF_EQ || t->type == IF_NE) {
+        if (t->type == IF) {
             // If we find a conditional at a lower indent level, we've gone too far
             if (t->indent < indent_level) {
                 return NULL;
@@ -197,11 +197,11 @@ void token_print(Token *token) {
         case BEGINNING:
             printf("BEGINNING ");
             break;
-        case IF_EQ:
+        case IF:
             printf("IF ");
             break;
-        case IF_NE:
-            printf("NIF ");
+        case NOT:
+            printf("NOT ");
             break;
         case STR:
             printf("STR ");

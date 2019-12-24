@@ -9,7 +9,7 @@ Think of the script files as dumb sequential if statements.
 |--------------|---------|
 | `SYNC` &lt;url&gt; | Use libcurl to fetch a remote script & exec |
 | `IF` &lt;cmd&gt;   | A command with a zero exit code |
-| `NIF` &lt;cmd&gt;  | A command resulting in a non-zero exit code |
+| `NOT`              | Negates the previous IF to a non-zero exit code |
 | `DO` &lt;cmd&gt;   | A command to execute, optionally if the above `[N]IF` met the criteria |
 
 
@@ -24,13 +24,13 @@ todo
 ```text
 DO echo "beginning!"
 
-NIF rpm -q iptables
+IF NOT rpm -q iptables
     DO yum install iptables -y
 
-NIF iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+IF NOT iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
     DO iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
-NIF iptables -C INPUT -i lo -j ACCEPT
+IF NOT iptables -C INPUT -i lo -j ACCEPT
     DO iptables -A INPUT -i lo -j ACCEPT
 
 SYNC http://localhost/test.f

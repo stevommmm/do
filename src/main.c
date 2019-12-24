@@ -99,17 +99,17 @@ void parse_stream(FILE *stream) {
     Token *tmpt;
     while (token_current != NULL) {
         switch (token_current->type) {
-            case IF_EQ:
-            case IF_NE:
+            case IF:
                 tmpt = token_find_next_of(token_current, NEWLINE);
                 if (tmpt == NULL)
                     break;
 
                 // Save the result on the IF/NIF for trackback from indenting
-                if (token_current->type == IF_EQ) {
-                    token_current->passed = (bool) extract_cmd(token_current, tmpt) == 0;
+                if (token_current->next->type == NOT) {
+                    // If we're in a negated IF skip the NOT token
+                    token_current->passed = (bool) extract_cmd(token_current->next, tmpt) != 0;
                 } else {
-                    token_current->passed = (bool) extract_cmd(token_current, tmpt) != 0;
+                    token_current->passed = (bool) extract_cmd(token_current, tmpt) == 0;
                 }
                 // jump forwards again so we dont process all the STR making up the command
                 token_current = tmpt;
@@ -159,6 +159,7 @@ void parse_stream(FILE *stream) {
                 break;
             // explicitly silence things we dont handle directly
             case BEGINNING:
+            case NOT:
             case STR:
             case INDENT:
             case NEWLINE:
