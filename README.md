@@ -1,4 +1,6 @@
-# ok
+# do
+
+Get things done.
 
 Experiment in programming a programming language without all the *features* of other tools.
 
@@ -40,7 +42,7 @@ SYNC http://localhost/test.f
 ```bash
 echo -e 'IF true\n\tDO echo it must be so!' > test.f
 make
-./ok ./test.f
+./do ./test.f
 ```
 
 

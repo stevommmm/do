@@ -8,7 +8,7 @@ endif
 # 	CFLAGS += -fsigned-char
 # endif
 
-BINARY = ok
+BINARY = do
 
 all: $(BINARY)
 

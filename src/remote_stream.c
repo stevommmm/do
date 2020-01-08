@@ -6,8 +6,8 @@
 
 #include "remote_stream.h"
 
-ok_stream *remote_stream(const char *url) {
-    ok_stream *s = malloc(sizeof(ok_stream));
+do_stream *remote_stream(const char *url) {
+    do_stream *s = malloc(sizeof(do_stream));
 
     s->stream = open_memstream(&s->resp, &s->resp_len);
 
@@ -32,7 +32,7 @@ ok_stream *remote_stream(const char *url) {
     return s;
 }
 
-void remote_stream_free(ok_stream *s) {
+void remote_stream_free(do_stream *s) {
     fclose(s->stream);
     free(s->resp);
     free(s);

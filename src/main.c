@@ -122,7 +122,7 @@ void parse_stream(FILE *stream) {
                 }
 
                 if (token_current->next->type == STR && (token_current->indent == 0 || (tmpt != NULL && tmpt->passed))) {
-                    ok_stream *rstream;
+                    do_stream *rstream;
                     rstream = remote_stream(token_current->next->data);
                     if (rstream != NULL) {
                         if (DEBUG_LEVEL > 1)

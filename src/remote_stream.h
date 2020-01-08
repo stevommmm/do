@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 
-typedef struct ok_stream {
+typedef struct do_stream {
     FILE *stream;
     char *resp;
     size_t resp_len;
-} ok_stream;
+} do_stream;
 
-ok_stream *remote_stream(const char *url);
-void remote_stream_free(ok_stream *s);
+do_stream *remote_stream(const char *url);
+void remote_stream_free(do_stream *s);
 
 #endif /* REMOTE_STREAM_H */
