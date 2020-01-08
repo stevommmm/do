@@ -20,6 +20,7 @@ todo
 - [x] handle superfluous indenting characters
 - [x] parse nested indenting
 - [x] fetch remote scripts
+- [ ] variables / facts
 
 
 ### Example usage:
