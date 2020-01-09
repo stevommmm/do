@@ -1,8 +1,8 @@
 #!/bin/bash
 
-expected=$(grep '@SUCCESS' test/*.f | wc -l)
+expected=$(grep '@SUCCESS' test/*.do | wc -l)
 
-output=$(./do test/*.f 2>/dev/null)
+output=$(./do test/*.do 2>/dev/null)
 
 
 failed=$(echo "$output" | grep '@FAILURE' | wc -l)

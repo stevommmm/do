@@ -36,14 +36,14 @@ IF NOT iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 IF NOT iptables -C INPUT -i lo -j ACCEPT
     DO iptables -A INPUT -i lo -j ACCEPT
 
-SYNC http://localhost/test.f
+SYNC http://localhost/test.do
 
 ```
 
 ```bash
-echo -e 'IF true\n\tDO echo it must be so!' > test.f
+echo -e 'IF true\n\tDO echo it must be so!' > test.do
 make
-./do ./test.f
+./do ./test.do
 ```
 
 
