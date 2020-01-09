@@ -1,0 +1,25 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: do
+file_extensions:
+  - do
+scope: source.do
+contexts:
+  main:
+    - match: '"'
+      push:
+        - meta_scope: string.quoted.double
+        - match: '"'
+          pop: true
+    - match: "'"
+      push:
+        - meta_scope: string.quoted
+        - match: "'"
+          pop: true
+    - match: ^\t*(IF) (NOT)?
+      captures:
+        1: keyword.control
+        2: constant.language
+    - match: ^\t*(DO|SYNC)\b
+      scope: keyword.control
