@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "token.h"
 
@@ -24,6 +25,16 @@ bool streq(const char *str1, const char *str2) {
     return (bool) (memcmp(str1, str2, strlen(str1)) == 0);
 }
 
+/** Check if our string matches %variable_name%
+ *
+ *  \param[in]  str  string to compare
+ *
+ *  \return  true if the start/ending characters are a '%', false otherwise
+ */
+bool strisvar(const char *str) {
+    return (bool) (str[0] == '%' && str[strlen(str) - 1] == '%');
+}
+
 /** Check a string against known keywords
  *
  *  \param[in]  token  string to compare (IF|NOT|SYNC|DO)
@@ -39,6 +50,10 @@ TokenType gettokentype(const char *token) {
         return SYNC;
     } else if (streq("DO", token)) {
         return DO;
+    } else if (streq("SET", token)) {
+        return SET;
+    } else if (strisvar(token)) {
+        return VAR;
     }
     return STR;
 }
@@ -168,6 +183,28 @@ Token *token_find_last_conditional(Token *head, int indent_level) {
     return NULL;
 }
 
+/** Replace all VARs we get from head onwards that match
+ *
+ *  \param[in]  head  pointer to the VAR we're setting with the content of:
+ *  \param[in]  var   pointer to replacement content
+ */
+void token_sub_var(Token *head, Token *var) {
+    Token *t = head;
+    int vari = strlen(var->data);
+    size_t vart = (vari + 1) * sizeof(unsigned char);
+
+    while (t != NULL) {
+        if (t->type == VAR && streq(t->data, head->data)) {
+            // swap out our VAR for a STR (probably)
+            t->type = var->type;
+            // realloc(t->data, vart);
+            strncpy(t->data, "a", 2);
+            token_print(t);
+        }
+        t = t->next;
+    }
+}
+
 /** Recursively free elements from the list
  *
  *  \param[in] temp  pointer to a list member, preferrably the head
@@ -204,8 +241,7 @@ void token_print(Token *token) {
             printf("NOT ");
             break;
         case STR:
-            printf("STR ");
-            printf("%s ", token->data);
+            printf("STR '%s' ", token->data);
             break;
         case NEWLINE:
             printf("NEWLINE ");
@@ -218,6 +254,12 @@ void token_print(Token *token) {
             break;
         case DO:
             printf("DO ");
+            break;
+        case SET:
+            printf("SET ");
+            break;
+        case VAR:
+            printf("VAR '%s' ", token->data);
             break;
         case UNKNOWN:
             printf("UNKNOWN ");

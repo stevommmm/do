@@ -75,7 +75,7 @@ int extract_cmd(Token *cond, Token *nl) {
  *  \param[in]  stream  an open file resource
  */
 void parse_stream(FILE *stream) {
-    Token *token_head, *token_current;
+    Token *token_head, *token_current, *tmpt;
 
     token_head = malloc(sizeof(Token));
     token_head->index = 0;
@@ -96,9 +96,15 @@ void parse_stream(FILE *stream) {
 
     // run through structure
     token_current = token_head;
-    Token *tmpt;
     while (token_current != NULL) {
         switch (token_current->type) {
+            case SET:
+                if (token_current->next->type != VAR) {
+                    break;
+                }
+                token_sub_var(token_current->next, token_current->next->next);
+                token_current = token_current->next->next;
+                break;
             case IF:
                 tmpt = token_find_next_of(token_current, NEWLINE);
                 if (tmpt == NULL)
@@ -162,6 +168,7 @@ void parse_stream(FILE *stream) {
             case NOT:
             case STR:
             case INDENT:
+            case VAR:
             case NEWLINE:
             case UNKNOWN:
                 break;
