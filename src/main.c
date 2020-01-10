@@ -201,8 +201,8 @@ int main(int argc, char *argv[]) {
     int i;
     if (argc > 1) {
         for (i = 1; i < argc; i++) {
-            if (!strcmp(argv[i], "-v")) {
-                DEBUG_LEVEL++;
+            if (!strncmp(argv[i], "-v" , 2)) {
+                DEBUG_LEVEL = strlen(argv[i]) - 1;
             } else {
                 parse_file(argv[i]);
             }
