@@ -32,7 +32,7 @@ bool streq(const char *str1, const char *str2) {
  *  \return  true if the start/ending characters are a '%', false otherwise
  */
 bool strisvar(const char *str) {
-    return (bool) (str[0] == '%' && str[strlen(str) - 1] == '%');
+    return (bool) (strlen(str) >= 3 && str[0] == '%' && str[strlen(str) - 1] == '%');
 }
 
 /** Check a string against known keywords

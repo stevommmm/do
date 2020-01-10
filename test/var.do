@@ -6,3 +6,9 @@ IF true
 
 IF false
 	DO echo %FAIL%
+
+SET % @FAILURE
+SET %% @FAILURE
+
+DO echo %
+DO echo %%
