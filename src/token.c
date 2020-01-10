@@ -189,7 +189,7 @@ Token *token_find_last_conditional(Token *head, int indent_level) {
  *  \param[in]  var   pointer to replacement content
  */
 void token_sub_var(Token *head, Token *var) {
-    Token *t = head;
+    Token *t = var;
     int vari = strlen(var->data);
     size_t vart = (vari + 1) * sizeof(unsigned char);
 
@@ -197,9 +197,8 @@ void token_sub_var(Token *head, Token *var) {
         if (t->type == VAR && streq(t->data, head->data)) {
             // swap out our VAR for a STR (probably)
             t->type = var->type;
-            // realloc(t->data, vart);
-            strncpy(t->data, "a", 2);
-            token_print(t);
+            t->data = realloc(t->data, vart);
+            strncpy(t->data, var->data, vart);
         }
         t = t->next;
     }
