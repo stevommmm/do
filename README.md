@@ -47,19 +47,19 @@ SYNC http://localhost/test.do
 ```bash
 echo -e 'IF true\n\tDO echo it must be so!' > test.do
 make
-./do ./test.do
+./doer ./test.do
 ```
 
 
 # Building
 
-ubuntu: 
+ubuntu:
 ```bash
 apt install -y make gcc libcurl4-openssl-dev --no-install-recommends
 make
 ```
 
-centos: 
+centos:
 ```bash
 yum install -y make gcc libcurl-devel
 make
