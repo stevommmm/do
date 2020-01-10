@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
             }
         }
     } else {
-        fprintf(stderr, "Missing script file\n  usage: %s [-v ...] <script ...>\n\n", argv[0]);
+        fprintf(stderr, "Missing script file\n  usage: %s [-v...] <script ...>\n\n", argv[0]);
         return EXIT_FAILURE;
     }
 
