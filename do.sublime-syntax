@@ -21,5 +21,9 @@ contexts:
       captures:
         1: keyword.control
         2: constant.language
+    - match: ^\t*(SET) (%\w+%)
+      captures:
+        1: keyword.control
+        2: variable.language
     - match: ^\t*(DO|SYNC)\b
       scope: keyword.control

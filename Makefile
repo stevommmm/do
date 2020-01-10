@@ -23,5 +23,8 @@ $(BINARY): $(wildcard src/*.c)
 test: $(BINARY)
 	@test/run.sh
 
+syntax:
+	cp do.sublime-syntax ~/.config/sublime-text-3/Packages/User/
+
 clean:
 	$(RM) */*.o *.o $(BINARY)
