@@ -1,4 +1,8 @@
-
+SET %FAIL% @FAILURE
 SET %MEOW% @SUCCESS
 
-DO echo %MEOW%
+IF true
+	DO echo %MEOW%
+
+IF false
+	DO echo %FAIL%
