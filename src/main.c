@@ -65,7 +65,10 @@ int extract_cmd(Token *cond, Token *nl) {
 
     for (i = 0; i < command_elements; i++) {
         cond = cond->next;
-        command[i] = cond->data;
+        if (cond->type == VAR && cond->value)
+            command[i] = cond->value;
+        else
+            command[i] = cond->data;
     }
     return exec_cmd(command);
 }

@@ -190,14 +190,9 @@ Token *token_find_last_conditional(Token *head, int indent_level) {
  */
 void token_sub_var(Token *head, Token *var) {
     Token *t = var;
-    int vari = strlen(var->data);
-
     while (t != NULL) {
         if (t->type == VAR && streq(t->data, head->data)) {
-            // swap out our VAR for a STR (probably)
-            t->type = var->type;
-            t->data = realloc(t->data, (vari + 1) * sizeof(unsigned char));
-            strncpy(t->data, var->data, vari + 1);
+            t->value = var->data;
         }
         t = t->next;
     }

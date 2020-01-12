@@ -14,7 +14,10 @@ typedef struct Token {
     struct Token *next;
     struct Token *prev;
     unsigned int indent;
-    bool passed;
+    union {
+        bool passed;  // Conditionals result
+        char *value;  // Used in variables to point to value
+    };
 } Token;
 
 Token *gettoken(FILE *stream, Token *tok);
