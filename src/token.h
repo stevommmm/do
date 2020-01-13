@@ -20,6 +20,7 @@ typedef struct Token {
     };
 } Token;
 
+Token *token_alloc();
 Token *gettoken(FILE *stream, Token *tok);
 Token *token_find_next_of(Token *head, TokenType type);
 Token *token_find_last_conditional(Token *head, int indent_level);

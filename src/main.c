@@ -65,7 +65,7 @@ int extract_cmd(Token *cond, Token *nl) {
 
     for (i = 0; i < command_elements; i++) {
         cond = cond->next;
-        if (cond->type == VAR && cond->value)
+        if (cond->type == VAR && cond->value != NULL)
             command[i] = cond->value;
         else
             command[i] = cond->data;
@@ -82,13 +82,10 @@ int parse_stream(FILE *stream) {
 
     int return_code = 0;
 
-    token_head = malloc(sizeof(Token));
+    token_head = token_alloc();
     token_head->index = 0;
     token_head->indent = 0;
     token_head->type = BEGINNING;
-    token_head->data = NULL;
-    token_head->next = NULL;
-    token_head->prev = NULL;
 
     // Keep a reference to where we are
     token_current = token_head;

@@ -60,6 +60,25 @@ TokenType gettokentype(const char *token) {
     return STR;
 }
 
+
+/** Malloc out a blank token
+ *
+ *  \return  pointer to malloc'd Token
+ */
+Token *token_alloc() {
+    Token *token;
+    token = malloc(sizeof(Token));
+    token->index = -1;
+    token->indent = -1;
+    token->type = UNKNOWN;
+    token->data = NULL;
+    token->next = NULL;
+    token->prev = NULL;
+    token->value = NULL;
+    return token;
+}
+
+
 /** Process the FILE stream into a doubly linked list of Tokens
  *
  *  \param[in]  stream  pointer file we're working with, is mutated
@@ -76,14 +95,12 @@ Token *gettoken(FILE *stream, Token *tok) {
     char tmpl[MAX_ARG_STRLEN] = {'\0'};
 
     Token *token;
-    token = malloc(sizeof(Token));
+    token = token_alloc();
     token->index = tok->index + 1;
-    token->type = UNKNOWN;
-    token->data = NULL;
-    token->next = NULL;
     token->prev = tok;
     token->indent = tok->indent;
 
+    // set tail of list to our new token
     tok->next = token;
 
     while ((i = getc(stream)) != EOF) {
@@ -104,11 +121,9 @@ Token *gettoken(FILE *stream, Token *tok) {
                     // and create a new token node of NEWLINE type after it
                     if (c == '\n') {
                         Token *t;
-                        t = malloc(sizeof(Token));
+                        t = token_alloc();
                         t->index = token->index + 1;
                         t->type = NEWLINE;
-                        t->data = NULL;
-                        t->next = NULL;
                         t->prev = token;
                         token->next = t;
                         t->indent = 0;
