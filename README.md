@@ -47,7 +47,7 @@ SYNC http://localhost/test.do
 ```bash
 echo -e 'IF true\n\tDO echo it must be so!' > test.do
 make
-./doer ./test.do
+./do-run ./test.do
 ```
 
 
