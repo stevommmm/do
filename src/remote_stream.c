@@ -26,8 +26,6 @@ do_stream *remote_stream(const char *url) {
         remote_stream_free(s);
         return NULL;
     }
-
-    // free(resp);
     curl_easy_cleanup(curl);
     return s;
 }
