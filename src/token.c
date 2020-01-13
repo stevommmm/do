@@ -52,6 +52,8 @@ TokenType gettokentype(const char *token) {
         return DO;
     } else if (streq("SET", token)) {
         return SET;
+    } else if (streq("@FAILURE", token)) {
+        return FAILURE;
     } else if (strisvar(token)) {
         return VAR;
     }
@@ -183,6 +185,51 @@ Token *token_find_last_conditional(Token *head, int indent_level) {
     return NULL;
 }
 
+/** Follow backwards and check the last conditional for success (or no indent)
+ *
+ *  \param[in]  head  pointer to starting location in the list
+ *
+ *  \return  true/false value of conditional
+ */
+bool token_last_cond_passed(Token *head) {
+    Token *t = NULL;
+    if (head->indent > 0) {
+        t = token_find_last_conditional(head, head->indent - 1);
+        if (t == NULL)
+            return false;
+    }
+
+    // As long as a conditional passed we'll run
+    if (head->indent == 0 || t->passed) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *
+ *  \param[in]  head  pointer to starting location in the list
+ *
+ *  \return  true/false on location in script
+ */
+bool token_begins_line(Token *head) {
+    Token *t = head->prev;
+    while (t != NULL) {
+        switch (t->type) {
+            case INDENT:
+                break;
+            case BEGINNING:
+            case NEWLINE:
+                return true;
+            default:
+                token_print(t);
+                return false;
+        }
+        t = t->prev;
+    }
+    return false;
+}
+
 /** Replace all VARs we get from head onwards that match
  *
  *  \param[in]  head  pointer to the VAR we're setting with the content of:
@@ -253,6 +300,9 @@ void token_print(Token *token) {
             break;
         case VAR:
             printf("VAR '%s' ", token->data);
+            break;
+        case FAILURE:
+            printf("@FAILURE ");
             break;
         case UNKNOWN:
             printf("UNKNOWN ");

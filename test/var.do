@@ -1,14 +1,16 @@
-SET %FAIL% @FAILURE
+SET %FAIL% LALALALA
 SET %MEOW% @SUCCESS
 
 IF true
 	DO echo %MEOW%
 
 IF false
-	DO echo %FAIL%
+	@FAILURE
 
-SET % @FAILURE
-SET %% @FAILURE
+IF test ! %FAIL% = LALALALA
+	@FAILURE
 
 DO echo %
 DO echo %%
+
+DO echo %ALALALlA%

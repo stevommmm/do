@@ -77,8 +77,10 @@ int extract_cmd(Token *cond, Token *nl) {
  *
  *  \param[in]  stream  an open file resource
  */
-void parse_stream(FILE *stream) {
+int parse_stream(FILE *stream) {
     Token *token_head, *token_current, *tmpt;
+
+    int return_code = 0;
 
     token_head = malloc(sizeof(Token));
     token_head->index = 0;
@@ -101,14 +103,24 @@ void parse_stream(FILE *stream) {
     token_current = token_head;
     while (token_current != NULL) {
         switch (token_current->type) {
+            case FAILURE:
+                if (token_begins_line(token_current) && token_last_cond_passed(token_current)) {
+                    return_code++;
+                }
+                break;
             case SET:
                 if (token_current->next->type != VAR) {
                     break;
                 }
-                token_sub_var(token_current->next, token_current->next->next);
-                token_current = token_current->next->next;
+                if (token_begins_line(token_current) && token_last_cond_passed(token_current)) {
+                    token_sub_var(token_current->next, token_current->next->next);
+                    token_current = token_current->next->next;
+                }
                 break;
             case IF:
+                if (!token_begins_line(token_current) || !token_last_cond_passed(token_current)) {
+                    break;
+                }
                 tmpt = token_find_next_of(token_current, NEWLINE);
                 if (tmpt == NULL)
                     break;
@@ -125,18 +137,16 @@ void parse_stream(FILE *stream) {
 
                 break;
             case SYNC:
-                tmpt = NULL;
-                if (token_current->indent > 0) {
-                    tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
+                if (token_current->next->type != STR) {
+                    break;
                 }
-
-                if (token_current->next->type == STR && (token_current->indent == 0 || (tmpt != NULL && tmpt->passed))) {
+                if (token_begins_line(token_current) && token_last_cond_passed(token_current)) {
                     do_stream *rstream;
                     rstream = remote_stream(token_current->next->data);
                     if (rstream != NULL) {
                         if (DEBUG_LEVEL > 1)
                             printf("stream: %s\n", token_current->next->data);
-                        parse_stream(rstream->stream);
+                        return_code += parse_stream(rstream->stream);
                         remote_stream_free(rstream);
                     }
                 }
@@ -150,14 +160,8 @@ void parse_stream(FILE *stream) {
                     break;
                 }
                 tmpt = NULL;
-                if (token_current->indent > 0) {
-                    tmpt = token_find_last_conditional(token_current, token_current->indent - 1);
-                    if (tmpt == NULL)
-                        break;
-                }
-
                 // As long as a conditional passed we'll run
-                if (token_current->indent == 0 || tmpt->passed) {
+                if (token_begins_line(token_current) && token_last_cond_passed(token_current)) {
                     tmpt = token_find_next_of(token_current, NEWLINE);
                     if (tmpt == NULL)
                         break;
@@ -179,13 +183,16 @@ void parse_stream(FILE *stream) {
         token_current = token_current->next;
     }
     token_follow_free(token_head);
+
+    return return_code;
 }
 
 /** Process the file given using our dll tokenizer
  *
  *  \param[in]  filename  the path/name of our file to execute
  */
-void parse_file(const char *filename) {
+int parse_file(const char *filename) {
+    int rc = -1;
     FILE *stream = fopen(filename, "r");
     if (stream == NULL) {
         perror("fopen");
@@ -195,19 +202,23 @@ void parse_file(const char *filename) {
     if (DEBUG_LEVEL > 1)
         printf("file: %s\n", filename);
 
-    parse_stream(stream);
+    rc = parse_stream(stream);
 
     fclose(stream);
+    return rc;
 }
 
 int main(int argc, char *argv[]) {
+    int rc = 0;
     int i;
     if (argc > 1) {
         for (i = 1; i < argc; i++) {
             if (!strncmp(argv[i], "-v" , 2)) {
                 DEBUG_LEVEL = strlen(argv[i]) - 1;
             } else {
-                parse_file(argv[i]);
+                if ((rc = parse_file(argv[i])) == -1) {
+                    return EXIT_FAILURE;
+                }
             }
         }
     } else {
@@ -215,5 +226,5 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    return EXIT_SUCCESS;
+    return rc;
 }

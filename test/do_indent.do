@@ -1,9 +1,9 @@
 DO echo "@SUCCESS"
 
-	DO echo @FAILURE
+	@FAILURE
 
 IF true
 	DO echo @SUCCESS
-		DO echo @FAILURE
+		@FAILURE
 
 DO echo @SUCCESS

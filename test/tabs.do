@@ -1,6 +1,6 @@
 IF echo "	"
 	DO echo @SUCCESS
 IF NOT echo "	"
-	DO echo @FAILURE
+	@FAILURE
 IF test -z '	'
-	DO echo @FAILURE
+	@FAILURE

@@ -21,7 +21,7 @@ $(BINARY): $(wildcard src/*.c)
 .PHONY: clean test
 
 test: $(BINARY)
-	@test/run.sh
+	./doer test/*.do
 
 syntax:
 	cp do.sublime-syntax ~/.config/sublime-text-3/Packages/User/

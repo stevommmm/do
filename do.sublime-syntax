@@ -9,21 +9,23 @@ contexts:
   main:
     - match: '"'
       push:
-        - meta_scope: string.quoted.double
+        - meta_scope: string.quoted.double.do
         - match: '"'
           pop: true
     - match: "'"
       push:
-        - meta_scope: string.quoted
+        - meta_scope: string.quoted.do
         - match: "'"
           pop: true
     - match: ^\t*(IF) (NOT)?
       captures:
-        1: keyword.control
-        2: constant.language
+        1: keyword.control.do
+        2: constant.language.do
     - match: ^\t*(SET) (%\w+%)
       captures:
-        1: keyword.control
-        2: variable.language
+        1: keyword.control.do
+        2: variable.language.do
     - match: ^\t*(DO|SYNC)\b
-      scope: keyword.control
+      scope: keyword.control.do
+    - match: "@FAILURE"
+      scope: variable.annotation.do
