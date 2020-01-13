@@ -17,7 +17,7 @@ contexts:
         - meta_scope: string.quoted.do
         - match: "'"
           pop: true
-    - match: ^\t*(IF) (NOT)?
+    - match: ^\t*(IF) (NOT )?
       captures:
         1: keyword.control.do
         2: constant.language.do
@@ -27,5 +27,5 @@ contexts:
         2: variable.language.do
     - match: ^\t*(DO|SYNC)\b
       scope: keyword.control.do
-    - match: "@FAILURE"
+    - match: ^\t*@FAILURE\b
       scope: variable.annotation.do

@@ -196,7 +196,7 @@ int parse_file(const char *filename) {
     FILE *stream = fopen(filename, "r");
     if (stream == NULL) {
         perror("fopen");
-        exit(EXIT_FAILURE);
+        return rc;
     }
 
     if (DEBUG_LEVEL > 1)
