@@ -115,7 +115,7 @@ int parse_stream(FILE *stream) {
                 long state = strtol(token_resolv_val(tmpt = tmpt->next), NULL, 10);
                 const char *output = token_resolv_val(tmpt = tmpt->next);
 
-                bool successful = nrdp_service_send(url, token, 1, service, hostname, (int) state, output);
+                bool successful = nrdp_service_send(url, token, service, hostname, (int) state, output);
                 if (DEBUG_LEVEL > 0) {
                     printf("\x1b[30mNRDP %s %s = %s\x1b[0m\n", service, hostname, successful ? "sent" : "fail");
                 }

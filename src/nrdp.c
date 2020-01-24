@@ -11,26 +11,18 @@ size_t suppress_wb(void *buffer, size_t size, size_t nmemb, void *userp) {
  *
  *  \param[in]  url        remote endpoint (https://nagios/nrdp/)
  *  \param[in]  token      unique authenitcation token for NRDP
- *  \param[in]  checktype  magical int that is always set to 1
  *  \param[in]  hostname   matching name in nagios
  *  \param[in]  state      1|2|3 depending on OK|WARN|ERROR
  *  \param[in]  output     freeform text to send (and perfdata)
  *
  *  \return  true if the NRDP submission succeeded, else false
  */
-bool nrdp_host_send(const char *url, const char *token, int checktype,
+bool nrdp_host_send(const char *url, const char *token,
     const char *hostname, int state, const char *output) {
-    const char *template = "token=%s&cmd=submitcheck&xml=<?xml version='1.0'?>"
-      "<checkresults>"
-      "<checkresult type='host' checktype='%d'>"
-      "<hostname>%s</hostname>"
-      "<state>%d</state>"
-      "<output><![CDATA[%s]]></output>"
-      "</checkresult>"
-      "</checkresults>";
     char message[1024] = {'\0'};
-    snprintf(message, 1023, template, token, checktype, hostname, state, output);
+    const char *template = "token=%s&cmd=submitcmd&command=PROCESS_HOST_CHECK_RESULT;%s;%d;%s";
 
+    snprintf(message, 1023, template, token, hostname, state, output);
     return curl_post_xml(url, message);
 }
 
@@ -38,7 +30,6 @@ bool nrdp_host_send(const char *url, const char *token, int checktype,
  *
  *  \param[in]  url        remote endpoint (https://nagios/nrdp/)
  *  \param[in]  token      unique authenitcation token for NRDP
- *  \param[in]  checktype  magical int that is always set to 1
  *  \param[in]  service    service description from nagios to update
  *  \param[in]  hostname   matching name in nagios
  *  \param[in]  state      1|2|3 depending on OK|WARN|ERROR
@@ -46,20 +37,12 @@ bool nrdp_host_send(const char *url, const char *token, int checktype,
  *
  *  \return  true if the NRDP submission succeeded, else false
  */
-bool nrdp_service_send(const char *url, const char *token, int checktype,
+bool nrdp_service_send(const char *url, const char *token,
     const char *service, const char *hostname, int state, const char *output) {
-    const char *template = "token=%s&cmd=submitcheck&xml=<?xml version='1.0'?>"
-      "<checkresults>"
-      "<checkresult type='service' checktype='%d'>"
-      "<servicename>%s</servicename>"
-      "<hostname>%s</hostname>"
-      "<state>%d</state>"
-      "<output><![CDATA[%s]]></output>"
-      "</checkresult>"
-      "</checkresults>";
     char message[1024] = {'\0'};
-    snprintf(message, 1023, template, token, checktype, service, hostname, state, output);
+    const char *template = "token=%s&cmd=submitcmd&command=PROCESS_SERVICE_CHECK_RESULT;%s;%s;%d;%s";
 
+    snprintf(message, 1023, template, token, hostname, service, state, output);
     return curl_post_xml(url, message);
 }
 
