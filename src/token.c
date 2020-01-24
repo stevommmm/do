@@ -52,6 +52,8 @@ TokenType gettokentype(const char *token) {
         return DO;
     } else if (streq("SET", token)) {
         return SET;
+    } else if (streq("NRDP", token)) {
+        return NRDP;
     } else if (streq("@FAILURE", token)) {
         return FAILURE;
     } else if (strisvar(token)) {
@@ -200,6 +202,20 @@ Token *token_find_last_conditional(Token *head, int indent_level) {
     return NULL;
 }
 
+/** Shorthand resolver for VAR->STR
+ *
+ *  \param[in]  head  pointer potential VAR
+ *
+ *  \return  pointer to active data, depending on type
+ */
+char *token_resolv_val(Token *tok) {
+    if (tok->type == VAR && tok->value != NULL)
+        return tok->value;
+    else
+        return tok->data;
+    return NULL;
+}
+
 /** Follow backwards and check the last conditional for success (or no indent)
  *
  *  \param[in]  head  pointer to starting location in the list
@@ -312,6 +328,9 @@ void token_print(Token *token) {
             break;
         case SET:
             printf("SET ");
+            break;
+        case NRDP:
+            printf("NRDP ");
             break;
         case VAR:
             printf("VAR '%s' ", token->data);

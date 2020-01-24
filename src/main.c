@@ -8,6 +8,7 @@
 
 #include "remote_stream.h"
 #include "token.h"
+#include "nrdp.h"
 
 int DEBUG_LEVEL = 0;
 
@@ -65,10 +66,7 @@ int extract_cmd(Token *cond, Token *nl) {
 
     for (i = 0; i < command_elements; i++) {
         cond = cond->next;
-        if (cond->type == VAR && cond->value != NULL)
-            command[i] = cond->value;
-        else
-            command[i] = cond->data;
+        command[i] = token_resolv_val(cond);
     }
     return exec_cmd(command);
 }
@@ -104,6 +102,24 @@ int parse_stream(FILE *stream) {
                 if (token_begins_line(token_current) && token_last_cond_passed(token_current)) {
                     return_code++;
                 }
+                break;
+            case NRDP:
+                if (!token_begins_line(token_current) || !token_last_cond_passed(token_current)) {
+                    break;
+                }
+                tmpt = token_current;
+                const char *url = token_resolv_val(tmpt = tmpt->next);
+                const char *token = token_resolv_val(tmpt = tmpt->next);
+                const char *service = token_resolv_val(tmpt = tmpt->next);
+                const char *hostname = token_resolv_val(tmpt = tmpt->next);
+                long state = strtol(token_resolv_val(tmpt = tmpt->next), NULL, 10);
+                const char *output = token_resolv_val(tmpt = tmpt->next);
+
+                bool successful = nrdp_service_send(url, token, 1, service, hostname, (int) state, output);
+                if (DEBUG_LEVEL > 0) {
+                    printf("\x1b[30mNRDP %s %s = %s\x1b[0m\n", service, hostname, successful ? "sent" : "fail");
+                }
+                token_current = tmpt;
                 break;
             case SET:
                 if (token_current->next->type != VAR) {

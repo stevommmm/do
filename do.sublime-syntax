@@ -17,15 +17,14 @@ contexts:
         - meta_scope: string.quoted.do
         - match: "'"
           pop: true
+    - match: (%\w+%)
+      captures:
+        1: variable.language.do
     - match: ^\t*(IF) (NOT )?
       captures:
         1: keyword.control.do
         2: constant.language.do
-    - match: ^\t*(SET) (%\w+%)
-      captures:
-        1: keyword.control.do
-        2: variable.language.do
-    - match: ^\t*(DO|SYNC)\b
+    - match: ^\t*(DO|SET|SYNC|NRDP)\b
       scope: keyword.control.do
     - match: ^\t*@FAILURE\b
       scope: variable.annotation.do

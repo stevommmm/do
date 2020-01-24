@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef enum { BEGINNING, IF, NOT, DO, SYNC, STR, NEWLINE, INDENT, VAR, SET, FAILURE, UNKNOWN } TokenType;
+typedef enum { BEGINNING, IF, NOT, DO, SYNC, STR, NEWLINE, INDENT, VAR, SET, FAILURE, NRDP, UNKNOWN } TokenType;
 
 typedef struct Token {
     int index;
@@ -24,6 +24,7 @@ Token *token_alloc();
 Token *gettoken(FILE *stream, Token *tok);
 Token *token_find_next_of(Token *head, TokenType type);
 Token *token_find_last_conditional(Token *head, int indent_level);
+char *token_resolv_val(Token *tok);
 bool token_last_cond_passed(Token *head);
 bool token_begins_line(Token *head);
 void token_sub_var(Token *head, Token *var);
